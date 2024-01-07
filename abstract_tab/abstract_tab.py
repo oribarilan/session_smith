@@ -7,14 +7,15 @@ class AbstractTab:
     def __init__(self):
         self.example_factory = AbstractExampleFactory()
 
-    def _create_abstract(self, topic_title: str, length: int, description: str):
+    def _create_abstract(self, topic_title: str, length: int, description: str, terms: str):
         # This is a placeholder function that just returns the inputs for now.
-        echo = f"{topic_title=}\n{length=}\n{description=}"
+        terms_lst = terms.split(",")
+        echo = f"{topic_title=}\n{length=}\n{description=}'n{terms_lst=}"
         return echo
 
     def _populate_random(self):
-        # Currently, this function retrieves the predefined inputs for "example1".
-        return self.example_factory.generate()
+        topic, length, description = self.example_factory.generate()
+        return topic.title, length, description, topic.terms
 
     def create(self):
         with gr.Blocks() as abstract_tab:
@@ -24,17 +25,19 @@ class AbstractTab:
             """)
             with gr.Row():
                 with gr.Column():
-                    title = gr.Textbox(lines=2, placeholder="Enter Topic Title", label="Topic Title")
-                    length = gr.Slider(label="Session Length (minutes)", minimum=5, maximum=60, step=5,
-                                           value=30)
-                    desc = gr.Textbox(lines=5, placeholder="Enter a brief description of the session",
-                                          label="Description")
+                    title = gr.Textbox(lines=1, placeholder="Enter Topic Title", label="Topic Title")
+                    length = gr.Slider(label="Session Length (minutes)", minimum=5, maximum=60, step=5,value=30)
+                    desc = gr.Textbox(lines=5, placeholder="Enter a brief description of the session", label="Description")
+                    terms = gr.Textbox(lines=1, label="Terms (comma-separated)", placeholder="Kubernetes, Docker, Containers, Image, Isolation, Environment, Virtualization, Pod, Cluster, Node, Service, Deployment")
                     generate_btn = gr.Button("Generate")
-                    lucky_btn = gr.Button("I'm Feeling Lucky")
+                    with gr.Row():
+                        lucky_btn = gr.Button("I'm Feeling Lucky")
+                        clear = gr.ClearButton([title, length, desc, terms], value="Clear All")
 
                 with gr.Column():
-                    abstract = gr.Textbox(lines=10, label="Session Abstract", interactive=False)
+                    abstract = gr.Textbox(label="Session Abstract")
 
-            generate_btn.click(self._create_abstract, inputs=[title, length, desc], outputs=[abstract])
-            lucky_btn.click(self._populate_random, outputs=[title, length, desc])
+            generate_btn.click(self._create_abstract, inputs=[title, length, desc, terms], outputs=[abstract])
+            lucky_btn.click(self._populate_random, outputs=[title, length, desc, terms])
+
         return abstract_tab
