@@ -2,3 +2,7 @@ gradio==4.12.0
 python-dotenv==1.0.0
 op-log==0.21.0
 fliq==1.11.0
+langchain==0.1.0
+openai==1.7.0
+azure-identity==1.15.0
+langchain-openai==0.0.2

@@ -72,7 +72,7 @@ class AbstractExampleFactory:
             f"Interactive demonstrations will showcase the power and versatility of {topic.tech}, encouraging participants to consider how they might integrate these technologies into their own work.",
             f"Discussion will also cover the future trajectory of {topic.tech}, considering emerging trends, potential impacts, and ethical considerations, and how it can be applied outside {topic.domain}."
         ]
-        return " ".join(random.sample(base_sentences, random.randint(3, 5)))
+        return " ".join(random.sample(base_sentences, random.randint(2, 4)))
 
     def generate(self):
         topic = random.choice(self.topics)

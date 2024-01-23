@@ -1,17 +1,23 @@
 import gradio as gr
+from langchain_openai import AzureChatOpenAI
 
 from abstract_tab.abstract_example_factory import AbstractExampleFactory
+from abstract_tab.abstract_generator import AbstractGenerator
 
 
 class AbstractTab:
-    def __init__(self):
+    def __init__(self, llm_chat: AzureChatOpenAI):
         self.example_factory = AbstractExampleFactory()
+        self.abstract_generator = AbstractGenerator(llm_chat=llm_chat)
 
-    def _create_abstract(self, topic_title: str, length: int, description: str, terms: str):
+    def _create_abstract(self, topic_title: str, length: int, description: str, terms: str) -> str:
         # This is a placeholder function that just returns the inputs for now.
-        terms_lst = terms.split(",")
-        echo = f"{topic_title=}\n{length=}\n{description=}'n{terms_lst=}"
-        return echo
+        return self.abstract_generator.generate(
+            topic=topic_title,
+            length=length,
+            description=description,
+            terms=terms
+        )
 
     def _populate_random(self):
         topic, length, description = self.example_factory.generate()
@@ -27,8 +33,8 @@ class AbstractTab:
                 with gr.Column():
                     title = gr.Textbox(lines=1, placeholder="Enter Topic Title", label="Topic Title")
                     length = gr.Slider(label="Session Length (minutes)", minimum=5, maximum=60, step=5,value=30)
-                    desc = gr.Textbox(lines=5, placeholder="Enter a brief description of the session", label="Description")
-                    terms = gr.Textbox(lines=1, label="Terms (comma-separated)", placeholder="Kubernetes, Docker, Containers, Image, Isolation, Environment, Virtualization, Pod, Cluster, Node, Service, Deployment")
+                    desc = gr.Textbox(lines=5, placeholder="Enter a brief description of the session in free form", label="Description")
+                    terms = gr.Textbox(lines=1, label="Must-Have Terms (comma-separated)", placeholder="Kubernetes, Docker, Containers, Image, Isolation, Environment, Virtualization, Pod, Cluster, Node, Service, Deployment")
                     generate_btn = gr.Button("Generate")
                     with gr.Row():
                         lucky_btn = gr.Button("I'm Feeling Lucky")
